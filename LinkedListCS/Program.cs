@@ -150,7 +150,7 @@ namespace LinkedListCS
                 System.Console.WriteLine("Out of range");
             }
         }
-        public void deleteAt(int index)
+        public void deleteAt(uint index)
         {
             //Prevent the delete from going out of range
             if (this.head != null && index < this.getSize())
