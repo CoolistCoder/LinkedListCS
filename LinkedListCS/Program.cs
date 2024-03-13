@@ -1,6 +1,7 @@
 ﻿// Written by Alec 3/11/2024
 // in .net 8.0
 using System;
+using System.Drawing;
 
 namespace LinkedListCS
 {
@@ -34,6 +35,20 @@ namespace LinkedListCS
 
         private Node<T> head = null;
 
+        //private methods
+        public void swapNode(uint a, uint b)
+        {
+            //Check to see if a and b are within scope
+            if (a < this.getSize() && b < this.getSize())
+            {
+                T temp = this.getAt(a);
+                this.setAt(a, this.getAt(b));
+                this.setAt(b, temp);
+            }
+            
+        }
+
+        //public methods
         public void add(T dat)
         {
             //Check to see if the head is empty
@@ -64,10 +79,12 @@ namespace LinkedListCS
             {
                 //Create temp node to iterate through list
                 Node<T> temp = this.head;
+                int iter = 0;
                 while (temp != null)
                 {
-                    System.Console.WriteLine(temp.getData());
+                    System.Console.WriteLine("Element at " + iter + ": " + temp.getData());
                     temp = temp.getNext();
+                    iter++;
                 }
             }
             else
@@ -91,8 +108,9 @@ namespace LinkedListCS
             }
             return 0;
         }
-        public T getAt(int index)
+        public T getAt(uint index)
         {
+            //Prevent the get from going out of range
             if (this.head != null && index < this.getSize())
             {
                 //Create temp node to iterate through list
@@ -111,6 +129,52 @@ namespace LinkedListCS
             }
             return default(T);
         }
+        public void setAt(uint index, T value)
+        {
+            //Similar to getAt but sets the value at the index instead
+            //Prevent the get from going out of range
+            if (this.head != null && index < this.getSize())
+            {
+                //Create temp node to iterate through list
+                Node<T> temp = this.head;
+                int iter = 0;
+                while (temp != null && iter != index)
+                {
+                    temp = temp.getNext();
+                    iter++;
+                }
+                temp.setData(value);
+            }
+            else
+            {
+                System.Console.WriteLine("Out of range");
+            }
+        }
+        public void deleteAt(int index)
+        {
+            //Prevent the delete from going out of range
+            if (this.head != null && index < this.getSize())
+            {
+                //The theory is to get the temp to read the next node over
+                //And delete the node between the last and next.next
+                Node<T> temp = this.head;
+                Node<T> previous = temp;
+                int iter = 0;
+                while (temp.getNext() != null && iter < index)
+                {
+                    previous = temp;
+                    temp = temp.getNext();
+                    iter++;
+                }
+                previous.setNext(temp.getNext());
+                temp = null;
+            }
+            else if (this.head != null && this.head.getNext() == null)
+            { //if the head is not null but has no additional nodes...
+                this.head = null;
+            }
+        }
+        
         public void clean()
         {
             //The Garbage Collector should catch this
@@ -124,9 +188,8 @@ namespace LinkedListCS
     class Program
     {
         //3/11/2024 current implementation works like an expanding array
-        //Useful, but could be better.
-        //TODO: Add a function to swap elements
-        //TODO: Add a function to sort elements based on user preference
+        //Useful, and contains some tools arrays don't usually provide
+        //Author's Note: A sort isn't really feasible with generics unless an extension is performed
         public static void Main(string[] args)
         {
             //This is the instance of the linked list in the main
@@ -157,6 +220,24 @@ namespace LinkedListCS
             System.Console.WriteLine("Element at 5: " + mylist.getAt(5));
             System.Console.WriteLine("Element at 3: " + mylist.getAt(3));
             System.Console.WriteLine("Element at 99: " + mylist.getAt(99));
+
+            //3/13/2024 test the deleteAt method to demonstrate how it works
+            System.Console.WriteLine("I want to delete the element at 3");
+            System.Console.WriteLine("Press return to continue");
+            System.Console.ReadLine();
+
+            mylist.deleteAt(3);
+            System.Console.WriteLine("Printing all elements:");
+            mylist.printList();
+
+            //3/13/2024 test the swap
+            System.Console.WriteLine("Performing a swap between 2 and 4");
+            System.Console.WriteLine("Press return to continue");
+            System.Console.ReadLine();
+
+            mylist.swapNode(2, 4);
+            System.Console.WriteLine("Printing each element in the list");
+            mylist.printList();
 
             System.Console.WriteLine("End of program, have a nice day");
         }
